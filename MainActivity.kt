@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            DicerollerTheme() {
+            DicerollerTheme(){
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = Color.White
@@ -46,7 +46,7 @@ fun DiceApp() {
 @Composable
 fun DiceWithInputAndButton(modifier: Modifier = Modifier) {
 
-    var resultado by remember { mutableStateOf((1..6).random()) }
+    var resultado by remember { mutableStateOf(1) }
     var inputUsuario by remember { mutableStateOf("") }
 
     val context = LocalContext.current
@@ -68,11 +68,11 @@ fun DiceWithInputAndButton(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
 
-        // Campo branco com texto preto
+
         TextField(
             value = inputUsuario,
             onValueChange = { inputUsuario = it },
-            label = { Text("Digite o número do dado", color = Color.Black) },
+            label = { Text("Digite um número (1-6)", color = Color.Black) },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
@@ -93,28 +93,27 @@ fun DiceWithInputAndButton(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-
         Button(
             onClick = {
+
+                resultado = (1..6).random()
 
                 val numeroDigitado = inputUsuario.toIntOrNull()
 
                 if (numeroDigitado == null) {
-                    Toast.makeText(context, "Digite um número válido", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Digite um número válido!", Toast.LENGTH_SHORT).show()
 
                 } else if (numeroDigitado !in 1..6) {
-                    Toast.makeText(context, "Digite entre 1 e 6", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Digite entre 1 e 6!", Toast.LENGTH_SHORT).show()
 
                 } else if (numeroDigitado == resultado) {
-                    Toast.makeText(context, " Correto", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Acertou!", Toast.LENGTH_SHORT).show()
 
                 } else {
-                    Toast.makeText(context, "Errado Era $resultado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Errou! Saiu $resultado", Toast.LENGTH_SHORT).show()
                 }
 
-                resultado = (1..6).random()
                 inputUsuario = ""
-
             }
         ) {
             Text("Roll", color = Color.Black)
