@@ -1,0 +1,123 @@
+package com.example.diceroller
+
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import com.example.diceroller.ui.theme.DicerollerTheme
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            DicerollerTheme() {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color.White
+                ) {
+                    DiceApp()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DiceApp() {
+    DiceWithInputAndButton(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center)
+    )
+}
+
+@Composable
+fun DiceWithInputAndButton(modifier: Modifier = Modifier) {
+
+    var resultado by remember { mutableStateOf((1..6).random()) }
+    var inputUsuario by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+
+    val imagem = when (resultado) {
+        1 -> R.drawable.dice_1
+        2 -> R.drawable.dice_2
+        3 -> R.drawable.dice_3
+        4 -> R.drawable.dice_4
+        5 -> R.drawable.dice_5
+        else -> R.drawable.dice_6
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        // Campo branco com texto preto
+        TextField(
+            value = inputUsuario,
+            onValueChange = { inputUsuario = it },
+            label = { Text("Digite o número do dado", color = Color.Black) },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                cursorColor = Color.Black
+            )
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+
+        Image(
+            painter = painterResource(imagem),
+            contentDescription = resultado.toString(),
+            modifier = Modifier.size(150.dp)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+
+        Button(
+            onClick = {
+
+                val numeroDigitado = inputUsuario.toIntOrNull()
+
+                if (numeroDigitado == null) {
+                    Toast.makeText(context, "Digite um número válido", Toast.LENGTH_SHORT).show()
+
+                } else if (numeroDigitado !in 1..6) {
+                    Toast.makeText(context, "Digite entre 1 e 6", Toast.LENGTH_SHORT).show()
+
+                } else if (numeroDigitado == resultado) {
+                    Toast.makeText(context, " Correto", Toast.LENGTH_SHORT).show()
+
+                } else {
+                    Toast.makeText(context, "Errado Era $resultado", Toast.LENGTH_SHORT).show()
+                }
+
+                resultado = (1..6).random()
+                inputUsuario = ""
+
+            }
+        ) {
+            Text("Roll", color = Color.Black)
+        }
+    }
+}
